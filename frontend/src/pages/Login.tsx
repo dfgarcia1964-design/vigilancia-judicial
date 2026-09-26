@@ -22,7 +22,7 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-primary to-secondary flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">⚖️ VigiJudicial</h1>
+          <h1 className="text-3xl font-bold text-primary mb-2">⚖️ VIJIdfgarcia</h1>
           <p className="text-gray-600">Vigilancia Judicial y Administrativa</p>
         </div>
 

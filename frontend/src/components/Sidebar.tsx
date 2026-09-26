@@ -12,7 +12,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-white shadow-md">
       <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-primary">⚖️ VigiJudicial</h2>
+        <h2 className="text-xl font-bold text-primary">⚖️ VIJIdfgarcia</h2>
       </div>
       <nav className="mt-6">
         {menuItems.map((item) => (

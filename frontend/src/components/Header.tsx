@@ -15,9 +15,9 @@ export default function Header() {
       <div className="flex items-center justify-between px-6 py-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Vigilancia Judicial y Administrativa
+            VIJIdfgarcia
           </h1>
-          <p className="text-sm text-gray-500">Colombia</p>
+          <p className="text-sm text-gray-500">Vigilancia Judicial y Administrativa - Colombia</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
