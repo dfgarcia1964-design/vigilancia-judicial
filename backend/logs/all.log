@@ -1,0 +1,172 @@
+[2026-09-26 12:11:38:1138] [info] Intento de registro {
+  "email": "newuser@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] Usuario registrado exitosamente {
+  "userId": "cmuincrvb0000h1pt11w6e4db",
+  "email": "newuser@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 201,
+  "duration": "161ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [warn] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 400,
+  "duration": "2ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] Intento de registro {
+  "email": "duplicate@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] Usuario registrado exitosamente {
+  "userId": "cmuincrx10001h1ptc3ubraat",
+  "email": "duplicate@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 201,
+  "duration": "49ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] Intento de registro {
+  "email": "duplicate@example.com"
+}
+[2026-09-26 12:11:38:1138] [warn] Intento de registro con email ya existente {
+  "email": "duplicate@example.com"
+}
+[2026-09-26 12:11:38:1138] [warn] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 400,
+  "duration": "2ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [warn] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 400,
+  "duration": "1ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] Intento de registro {
+  "email": "login@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] Usuario registrado exitosamente {
+  "userId": "cmuincryo0002h1ptu3zxox6c",
+  "email": "login@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 201,
+  "duration": "49ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] Intento de login {
+  "email": "login@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] Login exitoso {
+  "userId": "cmuincryo0002h1ptu3zxox6c",
+  "email": "login@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] [POST] /api/auth/login {
+  "method": "POST",
+  "url": "/api/auth/login",
+  "statusCode": 200,
+  "duration": "46ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] Intento de registro {
+  "email": "wrongpass@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] Usuario registrado exitosamente {
+  "userId": "cmuincs1h0003h1ptkv9k1hpy",
+  "email": "wrongpass@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 201,
+  "duration": "50ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] Intento de login {
+  "email": "wrongpass@example.com"
+}
+[2026-09-26 12:11:38:1138] [warn] Login fallido: contraseña inválida {
+  "email": "wrongpass@example.com"
+}
+[2026-09-26 12:11:38:1138] [warn] [POST] /api/auth/login {
+  "method": "POST",
+  "url": "/api/auth/login",
+  "statusCode": 401,
+  "duration": "47ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] Intento de login {
+  "email": "nonexistent@example.com"
+}
+[2026-09-26 12:11:38:1138] [warn] Login fallido: usuario no encontrado {
+  "email": "nonexistent@example.com"
+}
+[2026-09-26 12:11:38:1138] [warn] [POST] /api/auth/login {
+  "method": "POST",
+  "url": "/api/auth/login",
+  "statusCode": 401,
+  "duration": "2ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] Intento de registro {
+  "email": "metest@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] Usuario registrado exitosamente {
+  "userId": "cmuincs4d0004h1ptfzjqrjnl",
+  "email": "metest@example.com"
+}
+[2026-09-26 12:11:38:1138] [info] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 201,
+  "duration": "47ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [info] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 200,
+  "duration": "2ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "cmuincs4d0004h1ptfzjqrjnl"
+}
+[2026-09-26 12:11:38:1138] [warn] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 401,
+  "duration": "0ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
+[2026-09-26 12:11:38:1138] [warn] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 401,
+  "duration": "1ms",
+  "ip": "::ffff:127.0.0.1",
+  "userId": "anonymous"
+}
