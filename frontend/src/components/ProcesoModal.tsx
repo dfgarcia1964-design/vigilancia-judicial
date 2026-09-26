@@ -21,14 +21,6 @@ const tiposProceso = [
   'Otros',
 ]
 
-const estadosProceso = [
-  'en_tramite',
-  'respondido',
-  'apelado',
-  'resuelto',
-  'cerrado',
-]
-
 export default function ProcesoModal({
   isOpen,
   onClose,

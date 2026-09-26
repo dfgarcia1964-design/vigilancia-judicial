@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import axios from 'axios'
-import { useAuthStore } from '../store/authStore'
+import { api } from '../lib/apiClient'
 
 export interface Expediente {
   id: string
@@ -29,19 +28,10 @@ interface UseExpedientesReturn {
   buscar: (q: string) => Promise<Expediente[]>
 }
 
-const API_URL = 'http://localhost:5000/api/expedientes'
-
 export const useExpedientes = (): UseExpedientesReturn => {
   const [expedientes, setExpedientes] = useState<Expediente[]>([])
   const [cargando, setCargando] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { token } = useAuthStore()
-
-  const getAxiosConfig = () => ({
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
 
   const obtenerExpedientes = async (filtros?: any) => {
     setCargando(true)
@@ -52,10 +42,7 @@ export const useExpedientes = (): UseExpedientesReturn => {
       if (filtros?.tipo) params.append('tipo', filtros.tipo)
       if (filtros?.juzgado) params.append('juzgado', filtros.juzgado)
 
-      const response = await axios.get(
-        `${API_URL}?${params.toString()}`,
-        getAxiosConfig()
-      )
+      const response = await api.get(`/expedientes?${params.toString()}`)
       setExpedientes(response.data.expedientes)
     } catch (err: any) {
       const mensaje = err.response?.data?.error || 'Error al obtener expedientes'
@@ -68,7 +55,7 @@ export const useExpedientes = (): UseExpedientesReturn => {
 
   const obtenerExpediente = async (id: string): Promise<Expediente> => {
     try {
-      const response = await axios.get(`${API_URL}/${id}`, getAxiosConfig())
+      const response = await api.get(`/expedientes/${id}`)
       return response.data
     } catch (err: any) {
       const mensaje = err.response?.data?.error || 'Error al obtener expediente'
@@ -81,7 +68,7 @@ export const useExpedientes = (): UseExpedientesReturn => {
     setCargando(true)
     setError(null)
     try {
-      const response = await axios.post(API_URL, datos, getAxiosConfig())
+      const response = await api.post('/expedientes', datos)
       const nuevoExpediente = response.data.expediente
       setExpedientes([nuevoExpediente, ...expedientes])
       return nuevoExpediente
@@ -98,7 +85,7 @@ export const useExpedientes = (): UseExpedientesReturn => {
     setCargando(true)
     setError(null)
     try {
-      const response = await axios.put(`${API_URL}/${id}`, datos, getAxiosConfig())
+      const response = await api.put(`/expedientes/${id}`, datos)
       const expedienteActualizado = response.data.expediente
       setExpedientes(
         expedientes.map((exp) => (exp.id === id ? expedienteActualizado : exp))
@@ -117,7 +104,7 @@ export const useExpedientes = (): UseExpedientesReturn => {
     setCargando(true)
     setError(null)
     try {
-      await axios.delete(`${API_URL}/${id}`, getAxiosConfig())
+      await api.delete(`/expedientes/${id}`)
       setExpedientes(expedientes.filter((exp) => exp.id !== id))
     } catch (err: any) {
       const mensaje = err.response?.data?.error || 'Error al eliminar expediente'
@@ -130,10 +117,7 @@ export const useExpedientes = (): UseExpedientesReturn => {
 
   const buscar = async (q: string): Promise<Expediente[]> => {
     try {
-      const response = await axios.get(
-        `${API_URL}/buscar?q=${q}`,
-        getAxiosConfig()
-      )
+      const response = await api.get(`/expedientes/buscar?q=${q}`)
       return response.data.resultados
     } catch (err: any) {
       const mensaje = err.response?.data?.error || 'Error en búsqueda'

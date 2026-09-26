@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import axios from 'axios'
+import { api, getApiClient } from '../lib/apiClient'
 
 interface Usuario {
   id: string
@@ -20,8 +20,6 @@ interface AuthStore {
   verificarAuth: () => Promise<void>
 }
 
-const API_URL = 'http://localhost:5000/api'
-
 export const useAuthStore = create<AuthStore>((set) => ({
   token: localStorage.getItem('token'),
   usuario: null,
@@ -31,12 +29,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
   login: async (email: string, password: string) => {
     set({ cargando: true, error: null })
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
+      const response = await api.post('/auth/login', {
         email,
         password,
       })
       const { token, usuario } = response.data
       localStorage.setItem('token', token)
+      getApiClient()
       set({ token, usuario, cargando: false })
     } catch (error: any) {
       const mensaje = error.response?.data?.error || 'Error al iniciar sesión'
@@ -48,7 +47,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   register: async (email: string, nombre: string, apellido: string, password: string, passwordConfirm: string) => {
     set({ cargando: true, error: null })
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, {
+      const response = await api.post('/auth/register', {
         email,
         nombre,
         apellido,
@@ -57,6 +56,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       })
       const { token, usuario } = response.data
       localStorage.setItem('token', token)
+      getApiClient()
       set({ token, usuario, cargando: false })
     } catch (error: any) {
       const mensaje = error.response?.data?.error || 'Error al registrarse'
@@ -78,11 +78,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
 
     try {
-      const response = await axios.get(`${API_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const response = await api.get('/auth/me')
       set({ usuario: response.data, token })
     } catch (error) {
       localStorage.removeItem('token')
