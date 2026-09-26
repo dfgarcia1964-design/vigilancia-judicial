@@ -61,7 +61,7 @@ export default function Dashboard() {
         <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
         <button
           onClick={() => setShowQuickStart(true)}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition flex items-center gap-2"
+          className="hidden md:flex bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition items-center gap-2"
         >
           <span>⚡ Inicio Rápido</span>
         </button>
@@ -71,6 +71,22 @@ export default function Dashboard() {
         <div className="text-center py-8 text-gray-500">Cargando datos...</div>
       ) : (
         <>
+          {/* Quick Start Card - Desktop View */}
+          <div className="hidden md:block mb-8">
+            <button
+              onClick={() => setShowQuickStart(true)}
+              className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-lg shadow-lg p-8 transition transform hover:scale-105 duration-200"
+            >
+              <div className="flex items-center justify-between">
+                <div className="text-left">
+                  <h3 className="text-2xl font-bold mb-2">⚡ Crear Nuevo Expediente</h3>
+                  <p className="text-indigo-100">Acceso rápido a la creación de expedientes</p>
+                </div>
+                <div className="text-5xl opacity-20">→</div>
+              </div>
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {statItems.map((stat) => (
               <div key={stat.label} className="bg-white rounded-lg shadow-md p-6">
