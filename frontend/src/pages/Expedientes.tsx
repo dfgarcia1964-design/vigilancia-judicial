@@ -3,11 +3,22 @@ import { useExpedientes, Expediente } from '../hooks/useExpedientes'
 import ExpedienteModal from '../components/ExpedienteModal'
 
 export default function Expedientes() {
-  const { expedientes, cargando, error, obtenerExpedientes, crearExpediente, actualizarExpediente, eliminarExpediente } = useExpedientes()
   const [modalAbierto, setModalAbierto] = useState(false)
   const [expedienteSeleccionado, setExpedienteSeleccionado] = useState<Expediente | undefined>()
   const [busqueda, setBusqueda] = useState('')
   const [filtroEstado, setFiltroEstado] = useState('')
+
+  const {
+    expedientes,
+    cargando,
+    error,
+    obtenerExpedientes,
+    crearExpediente,
+    actualizarExpediente,
+    eliminarExpediente,
+    isCreating,
+    isUpdating,
+  } = useExpedientes()
 
   useEffect(() => {
     obtenerExpedientes()
@@ -31,7 +42,6 @@ export default function Expedientes() {
         await crearExpediente(datos)
       }
       handleCerrarModal()
-      obtenerExpedientes()
     } catch (err) {
       console.error('Error:', err)
     }
@@ -41,7 +51,6 @@ export default function Expedientes() {
     if (confirm('¿Estás seguro de que deseas eliminar este expediente?')) {
       try {
         await eliminarExpediente(id)
-        obtenerExpedientes()
       } catch (err) {
         console.error('Error:', err)
       }
@@ -73,7 +82,7 @@ export default function Expedientes() {
 
       {error && (
         <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+          {error.message}
         </div>
       )}
 
@@ -183,7 +192,7 @@ export default function Expedientes() {
         onClose={handleCerrarModal}
         onSubmit={handleSubmit}
         expediente={expedienteSeleccionado}
-        cargando={cargando}
+        cargando={isCreating || isUpdating}
       />
     </div>
   )

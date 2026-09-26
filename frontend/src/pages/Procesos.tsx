@@ -3,11 +3,22 @@ import { useProcesos, Proceso } from '../hooks/useProcesos'
 import ProcesoModal from '../components/ProcesoModal'
 
 export default function Procesos() {
-  const { procesos, cargando, error, obtenerProcesos, crearProceso, actualizarProceso, eliminarProceso } = useProcesos()
   const [modalAbierto, setModalAbierto] = useState(false)
   const [procesoSeleccionado, setProcesoSeleccionado] = useState<Proceso | undefined>()
   const [busqueda, setBusqueda] = useState('')
   const [filtroEstado, setFiltroEstado] = useState('')
+
+  const {
+    procesos,
+    cargando,
+    error,
+    obtenerProcesos,
+    crearProceso,
+    actualizarProceso,
+    eliminarProceso,
+    isCreating,
+    isUpdating,
+  } = useProcesos()
 
   useEffect(() => {
     obtenerProcesos()
@@ -31,7 +42,6 @@ export default function Procesos() {
         await crearProceso(datos)
       }
       handleCerrarModal()
-      obtenerProcesos()
     } catch (err) {
       console.error('Error:', err)
     }
@@ -41,7 +51,6 @@ export default function Procesos() {
     if (confirm('¿Estás seguro de que deseas eliminar este proceso?')) {
       try {
         await eliminarProceso(id)
-        obtenerProcesos()
       } catch (err) {
         console.error('Error:', err)
       }
@@ -107,7 +116,7 @@ export default function Procesos() {
 
       {error && (
         <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          {error}
+          {error.message}
         </div>
       )}
 
@@ -211,7 +220,7 @@ export default function Procesos() {
         onClose={handleCerrarModal}
         onSubmit={handleSubmit}
         proceso={procesoSeleccionado}
-        cargando={cargando}
+        cargando={isCreating || isUpdating}
       />
     </div>
   )

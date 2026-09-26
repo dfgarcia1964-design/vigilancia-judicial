@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import React from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../lib/apiClient'
 
 export interface Expediente {
@@ -19,122 +20,101 @@ export interface Expediente {
 interface UseExpedientesReturn {
   expedientes: Expediente[]
   cargando: boolean
-  error: string | null
-  obtenerExpedientes: (filtros?: any) => Promise<void>
+  error: Error | null
+  obtenerExpedientes: (filtros?: any) => void
   obtenerExpediente: (id: string) => Promise<Expediente>
   crearExpediente: (datos: Omit<Expediente, 'id' | 'usuarioId' | 'createdAt' | 'updatedAt'>) => Promise<Expediente>
   actualizarExpediente: (id: string, datos: Partial<Expediente>) => Promise<Expediente>
   eliminarExpediente: (id: string) => Promise<void>
   buscar: (q: string) => Promise<Expediente[]>
+  isCreating: boolean
+  isUpdating: boolean
+  isDeleting: boolean
 }
 
-export const useExpedientes = (): UseExpedientesReturn => {
-  const [expedientes, setExpedientes] = useState<Expediente[]>([])
-  const [cargando, setCargando] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+interface ExpedienteFilters {
+  estado?: string
+  tipo?: string
+  juzgado?: string
+}
 
-  const obtenerExpedientes = async (filtros?: any) => {
-    setCargando(true)
-    setError(null)
-    try {
+const EXPEDIENTES_QUERY_KEY = ['expedientes']
+
+export const useExpedientes = (filtrosInicial?: ExpedienteFilters): UseExpedientesReturn => {
+  const queryClient = useQueryClient()
+  const [filtros, setFiltros] = React.useState<ExpedienteFilters>(filtrosInicial || {})
+
+  const buildQueryKey = () => [...EXPEDIENTES_QUERY_KEY, filtros]
+
+  const { data: expedientes = [], isPending, error } = useQuery({
+    queryKey: buildQueryKey(),
+    queryFn: async () => {
       const params = new URLSearchParams()
-      if (filtros?.estado) params.append('estado', filtros.estado)
-      if (filtros?.tipo) params.append('tipo', filtros.tipo)
-      if (filtros?.juzgado) params.append('juzgado', filtros.juzgado)
+      if (filtros.estado) params.append('estado', filtros.estado)
+      if (filtros.tipo) params.append('tipo', filtros.tipo)
+      if (filtros.juzgado) params.append('juzgado', filtros.juzgado)
 
       const response = await api.get(`/expedientes?${params.toString()}`)
-      setExpedientes(response.data.expedientes)
-    } catch (err: any) {
-      const mensaje = err.response?.data?.error || 'Error al obtener expedientes'
-      setError(mensaje)
-      console.error('Error:', err)
-    } finally {
-      setCargando(false)
-    }
-  }
+      return response.data.expedientes
+    },
+  })
 
-  const obtenerExpediente = async (id: string): Promise<Expediente> => {
-    try {
-      const response = await api.get(`/expedientes/${id}`)
-      return response.data
-    } catch (err: any) {
-      const mensaje = err.response?.data?.error || 'Error al obtener expediente'
-      setError(mensaje)
-      throw err
-    }
-  }
-
-  const crearExpediente = async (datos: Omit<Expediente, 'id' | 'usuarioId' | 'createdAt' | 'updatedAt'>): Promise<Expediente> => {
-    setCargando(true)
-    setError(null)
-    try {
+  const crearMutation = useMutation({
+    mutationFn: async (datos: Omit<Expediente, 'id' | 'usuarioId' | 'createdAt' | 'updatedAt'>) => {
       const response = await api.post('/expedientes', datos)
-      const nuevoExpediente = response.data.expediente
-      setExpedientes([nuevoExpediente, ...expedientes])
-      return nuevoExpediente
-    } catch (err: any) {
-      const mensaje = err.response?.data?.error || 'Error al crear expediente'
-      setError(mensaje)
-      throw err
-    } finally {
-      setCargando(false)
-    }
-  }
+      return response.data.expediente
+    },
+    onSuccess: (nuevoExpediente) => {
+      queryClient.setQueryData(buildQueryKey(), (old: Expediente[] = []) => [
+        nuevoExpediente,
+        ...old,
+      ])
+    },
+  })
 
-  const actualizarExpediente = async (id: string, datos: Partial<Expediente>): Promise<Expediente> => {
-    setCargando(true)
-    setError(null)
-    try {
+  const actualizarMutation = useMutation({
+    mutationFn: async ({ id, datos }: { id: string; datos: Partial<Expediente> }) => {
       const response = await api.put(`/expedientes/${id}`, datos)
-      const expedienteActualizado = response.data.expediente
-      setExpedientes(
-        expedientes.map((exp) => (exp.id === id ? expedienteActualizado : exp))
+      return response.data.expediente
+    },
+    onSuccess: (expedienteActualizado) => {
+      queryClient.setQueryData(buildQueryKey(), (old: Expediente[] = []) =>
+        old.map((exp) => (exp.id === expedienteActualizado.id ? expedienteActualizado : exp))
       )
-      return expedienteActualizado
-    } catch (err: any) {
-      const mensaje = err.response?.data?.error || 'Error al actualizar expediente'
-      setError(mensaje)
-      throw err
-    } finally {
-      setCargando(false)
-    }
-  }
+    },
+  })
 
-  const eliminarExpediente = async (id: string): Promise<void> => {
-    setCargando(true)
-    setError(null)
-    try {
+  const eliminarMutation = useMutation({
+    mutationFn: async (id: string) => {
       await api.delete(`/expedientes/${id}`)
-      setExpedientes(expedientes.filter((exp) => exp.id !== id))
-    } catch (err: any) {
-      const mensaje = err.response?.data?.error || 'Error al eliminar expediente'
-      setError(mensaje)
-      throw err
-    } finally {
-      setCargando(false)
-    }
-  }
-
-  const buscar = async (q: string): Promise<Expediente[]> => {
-    try {
-      const response = await api.get(`/expedientes/buscar?q=${q}`)
-      return response.data.resultados
-    } catch (err: any) {
-      const mensaje = err.response?.data?.error || 'Error en búsqueda'
-      setError(mensaje)
-      throw err
-    }
-  }
+    },
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(buildQueryKey(), (old: Expediente[] = []) =>
+        old.filter((exp) => exp.id !== id)
+      )
+    },
+  })
 
   return {
     expedientes,
-    cargando,
-    error,
-    obtenerExpedientes,
-    obtenerExpediente,
-    crearExpediente,
-    actualizarExpediente,
-    eliminarExpediente,
-    buscar,
+    cargando: isPending,
+    error: error as Error | null,
+    obtenerExpedientes: (nuevosFiltros?: ExpedienteFilters) => {
+      if (nuevosFiltros) setFiltros(nuevosFiltros)
+    },
+    obtenerExpediente: async (id: string) => {
+      const response = await api.get(`/expedientes/${id}`)
+      return response.data
+    },
+    crearExpediente: (datos) => crearMutation.mutateAsync(datos),
+    actualizarExpediente: (id, datos) => actualizarMutation.mutateAsync({ id, datos }),
+    eliminarExpediente: (id) => eliminarMutation.mutateAsync(id),
+    buscar: async (q: string) => {
+      const response = await api.get(`/expedientes/buscar?q=${q}`)
+      return response.data.resultados
+    },
+    isCreating: crearMutation.isPending,
+    isUpdating: actualizarMutation.isPending,
+    isDeleting: eliminarMutation.isPending,
   }
 }
