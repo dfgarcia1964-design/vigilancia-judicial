@@ -170,3 +170,128 @@
   "ip": "::ffff:127.0.0.1",
   "userId": "anonymous"
 }
+[2026-09-26 15:43:06:436] [info] Intento de login {
+  "email": "test@example.com"
+}
+[2026-09-26 15:43:06:436] [warn] Login fallido: usuario no encontrado {
+  "email": "test@example.com"
+}
+[2026-09-26 15:43:06:436] [warn] [POST] /api/auth/login {
+  "method": "POST",
+  "url": "/api/auth/login",
+  "statusCode": 401,
+  "duration": "48ms",
+  "ip": "::1",
+  "userId": "anonymous"
+}
+[2026-09-26 15:43:33:4333] [info] Intento de registro {
+  "email": "diego@example.com"
+}
+[2026-09-26 15:43:33:4333] [info] Usuario registrado exitosamente {
+  "userId": "cmuiuxav60000ubujq1jm924w",
+  "email": "diego@example.com"
+}
+[2026-09-26 15:43:33:4333] [info] [POST] /api/auth/register {
+  "method": "POST",
+  "url": "/api/auth/register",
+  "statusCode": 201,
+  "duration": "68ms",
+  "ip": "::1",
+  "userId": "anonymous"
+}
+[2026-09-26 15:43:33:4333] [info] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 200,
+  "duration": "2ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:43:33:4333] [info] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 304,
+  "duration": "5ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:43:33:4333] [info] [GET] /api/expedientes? {
+  "method": "GET",
+  "url": "/api/expedientes?",
+  "statusCode": 200,
+  "duration": "11ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:44:34:4434] [warn] [POST] /api/expedientes {
+  "method": "POST",
+  "url": "/api/expedientes",
+  "statusCode": 400,
+  "duration": "5ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:44:35:4435] [warn] [POST] /api/expedientes {
+  "method": "POST",
+  "url": "/api/expedientes",
+  "statusCode": 400,
+  "duration": "1ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:44:51:4451] [info] [GET] /api/procesos? {
+  "method": "GET",
+  "url": "/api/procesos?",
+  "statusCode": 200,
+  "duration": "2ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:50:56:5056] [info] [GET] /api/expedientes? {
+  "method": "GET",
+  "url": "/api/expedientes?",
+  "statusCode": 304,
+  "duration": "2ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:51:33:5133] [info] [GET] /api/expedientes? {
+  "method": "GET",
+  "url": "/api/expedientes?",
+  "statusCode": 304,
+  "duration": "1ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:51:33:5133] [info] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 304,
+  "duration": "1ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:51:33:5133] [info] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 304,
+  "duration": "1ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:51:33:5133] [info] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 304,
+  "duration": "1ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
+[2026-09-26 15:51:33:5133] [info] [GET] /api/auth/me {
+  "method": "GET",
+  "url": "/api/auth/me",
+  "statusCode": 304,
+  "duration": "1ms",
+  "ip": "::1",
+  "userId": "cmuiuxav60000ubujq1jm924w"
+}
