@@ -5,6 +5,7 @@ import { createServer } from 'http'
 import dotenv from 'dotenv'
 import authRoutes from './routes/auth.js'
 import expedientesRoutes from './routes/expedientes.js'
+import procesosRoutes from './routes/procesos.js'
 
 dotenv.config()
 
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/expedientes', expedientesRoutes)
+app.use('/api/procesos', procesosRoutes)
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Servidor funcionando correctamente' })
