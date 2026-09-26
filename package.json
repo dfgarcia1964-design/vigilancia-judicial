@@ -1,0 +1,15 @@
+{
+  "name": "vigilancia-judicial",
+  "version": "0.1.0",
+  "description": "Plataforma de vigilancia judicial y administrativa para Colombia",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces",
+    "install": "npm install --workspaces"
+  }
+}

@@ -1,0 +1,23 @@
+export default function Header() {
+  return (
+    <header className="bg-white shadow-sm border-b border-gray-200">
+      <div className="flex items-center justify-between px-6 py-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Vigilancia Judicial y Administrativa
+          </h1>
+          <p className="text-sm text-gray-500">Colombia</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <p className="text-sm font-medium text-gray-900">Usuario</p>
+            <p className="text-xs text-gray-500">admin@example.com</p>
+          </div>
+          <button className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-blue-700">
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </header>
+  )
+}

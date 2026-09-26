@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  nombre        String
+  apellido      String
+  password      String
+  rol           String   @default("user")
+  activo        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  expedientes   Expediente[]
+  procesos      Proceso[]
+  documentos    Documento[]
+  alertas       Alerta[]
+}
+
+model Expediente {
+  id            String   @id @default(cuid())
+  numero        String   @unique
+  juzgado       String
+  demandante    String
+  demandado     String
+  asunto        String
+  estado        String   @default("en_tramite")
+  tipo          String
+  fechaInicio   DateTime
+  usuarioId     String
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+
+  procesos      Proceso[]
+  documentos    Documento[]
+  alertas       Alerta[]
+  audiencias    Audiencia[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Proceso {
+  id            String   @id @default(cuid())
+  numero        String
+  entidad       String
+  asunto        String
+  estado        String   @default("en_tramite")
+  tipo          String
+  expedienteId  String?
+  expediente    Expediente? @relation(fields: [expedienteId], references: [id])
+  usuarioId     String
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+
+  recursos      Recurso[]
+  respuestas    Respuesta[]
+  alertas       Alerta[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Documento {
+  id            String   @id @default(cuid())
+  nombre        String
+  tipo          String
+  ruta          String
+  expedienteId  String?
+  expediente    Expediente? @relation(fields: [expedienteId], references: [id])
+  usuarioId     String
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Alerta {
+  id            String   @id @default(cuid())
+  tipo          String
+  mensaje       String
+  prioridad     String   @default("media")
+  leida         Boolean  @default(false)
+  expedienteId  String?
+  expediente    Expediente? @relation(fields: [expedienteId], references: [id])
+  procesoId     String?
+  proceso       Proceso? @relation(fields: [procesoId], references: [id])
+  usuarioId     String
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Audiencia {
+  id            String   @id @default(cuid())
+  fecha         DateTime
+  hora          String
+  lugar         String
+  tipo          String
+  estado        String   @default("programada")
+  expedienteId  String
+  expediente    Expediente @relation(fields: [expedienteId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Recurso {
+  id            String   @id @default(cuid())
+  tipo          String
+  descripcion   String
+  estado        String   @default("presentado")
+  procesoId     String
+  proceso       Proceso  @relation(fields: [procesoId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Respuesta {
+  id            String   @id @default(cuid())
+  contenido     String
+  fecha         DateTime
+  procesoId     String
+  proceso       Proceso  @relation(fields: [procesoId], references: [id])
+
+  createdAt     DateTime @default(now())
+}
