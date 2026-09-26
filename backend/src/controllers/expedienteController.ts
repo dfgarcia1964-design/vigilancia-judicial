@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 import prisma from '../lib/prisma.js'
 import { AppError, asyncHandler } from '../middleware/errorHandler.js'
+import logger from '../lib/logger.js'
 
 export const crearExpediente = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { numero, juzgado, demandante, demandado, asunto, tipo, fechaInicio } = req.body
   const usuarioId = (req as any).userId
+
+  logger.info('Creando expediente', { numero, usuarioId })
 
   if (!numero || !juzgado || !demandante || !demandado || !asunto || !tipo || !fechaInicio) {
     throw new AppError(400, 'Todos los campos son requeridos')
@@ -15,6 +18,7 @@ export const crearExpediente = asyncHandler(async (req: Request, res: Response, 
   })
 
   if (expedienteExistente) {
+    logger.warn('Intento de crear expediente duplicado', { numero })
     throw new AppError(400, 'El número de expediente ya existe')
   }
 
@@ -30,6 +34,8 @@ export const crearExpediente = asyncHandler(async (req: Request, res: Response, 
       usuarioId,
     },
   })
+
+  logger.info('Expediente creado', { expedienteId: expediente.id, numero })
 
   res.status(201).json({
     message: 'Expediente creado exitosamente',
@@ -124,17 +130,22 @@ export const eliminarExpediente = asyncHandler(async (req: Request, res: Respons
   const { id } = req.params
   const usuarioId = (req as any).userId
 
+  logger.info('Eliminando expediente', { expedienteId: id, usuarioId })
+
   const expediente = await prisma.expediente.findFirst({
     where: { id, usuarioId },
   })
 
   if (!expediente) {
+    logger.warn('Intento de eliminar expediente no encontrado', { expedienteId: id })
     throw new AppError(404, 'Expediente no encontrado')
   }
 
   await prisma.expediente.delete({
     where: { id },
   })
+
+  logger.info('Expediente eliminado', { expedienteId: id })
 
   res.json({ message: 'Expediente eliminado exitosamente' })
 })

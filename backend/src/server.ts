@@ -9,6 +9,8 @@ import expedientesRoutes from './routes/expedientes.js'
 import procesosRoutes from './routes/procesos.js'
 import env from './config/env.js'
 import { errorHandler } from './middleware/errorHandler.js'
+import { requestLogger } from './middleware/logger.js'
+import logger from './lib/logger.js'
 
 dotenv.config()
 
@@ -26,6 +28,8 @@ app.use(cors({
   origin: env.CORS_ORIGIN,
   credentials: true,
 }))
+
+app.use(requestLogger)
 
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
@@ -48,13 +52,14 @@ app.get('/api/stats', (req, res) => {
 })
 
 io.on('connection', (socket) => {
-  console.log('✅ Cliente conectado:', socket.id)
+  logger.info(`Cliente conectado: ${socket.id}`)
 
   socket.on('disconnect', () => {
-    console.log('❌ Cliente desconectado:', socket.id)
+    logger.info(`Cliente desconectado: ${socket.id}`)
   })
 
   socket.on('nueva-alerta', (data) => {
+    logger.info('Nueva alerta recibida', { socketId: socket.id, data })
     io.emit('alerta-recibida', data)
   })
 })

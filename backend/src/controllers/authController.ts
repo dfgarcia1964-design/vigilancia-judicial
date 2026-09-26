@@ -4,9 +4,12 @@ import { Request, Response, NextFunction } from 'express'
 import prisma from '../lib/prisma.js'
 import env from '../config/env.js'
 import { AppError, asyncHandler } from '../middleware/errorHandler.js'
+import logger from '../lib/logger.js'
 
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { email, nombre, apellido, password, passwordConfirm } = req.body
+
+  logger.info('Intento de registro', { email })
 
   if (!email || !nombre || !apellido || !password || !passwordConfirm) {
     throw new AppError(400, 'Todos los campos son requeridos')
@@ -21,6 +24,7 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
   })
 
   if (usuarioExistente) {
+    logger.warn('Intento de registro con email ya existente', { email })
     throw new AppError(400, 'El email ya está registrado')
   }
 
@@ -34,6 +38,8 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
       password: hashedPassword,
     },
   })
+
+  logger.info('Usuario registrado exitosamente', { userId: usuario.id, email })
 
   const token = jwt.sign(
     { id: usuario.id, email: usuario.email },
@@ -57,6 +63,8 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
 export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body
 
+  logger.info('Intento de login', { email })
+
   if (!email || !password) {
     throw new AppError(400, 'Email y contraseña son requeridos')
   }
@@ -66,14 +74,18 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
   })
 
   if (!usuario) {
+    logger.warn('Login fallido: usuario no encontrado', { email })
     throw new AppError(401, 'Credenciales inválidas')
   }
 
   const passwordValida = await bcryptjs.compare(password, usuario.password)
 
   if (!passwordValida) {
+    logger.warn('Login fallido: contraseña inválida', { email })
     throw new AppError(401, 'Credenciales inválidas')
   }
+
+  logger.info('Login exitoso', { userId: usuario.id, email })
 
   const token = jwt.sign(
     { id: usuario.id, email: usuario.email },

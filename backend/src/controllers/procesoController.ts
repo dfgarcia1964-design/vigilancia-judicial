@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 import prisma from '../lib/prisma.js'
 import { AppError, asyncHandler } from '../middleware/errorHandler.js'
+import logger from '../lib/logger.js'
 
 export const crearProceso = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { numero, entidad, asunto, tipo, expedienteId } = req.body
   const usuarioId = (req as any).userId
+
+  logger.info('Creando proceso', { numero, usuarioId })
 
   if (!numero || !entidad || !asunto || !tipo) {
     throw new AppError(400, 'Campos requeridos: numero, entidad, asunto, tipo')
@@ -21,6 +24,8 @@ export const crearProceso = asyncHandler(async (req: Request, res: Response, nex
       ...(expedienteId && { expedienteId }),
     },
   })
+
+  logger.info('Proceso creado', { procesoId: proceso.id, numero })
 
   res.status(201).json({
     message: 'Proceso creado exitosamente',
@@ -106,17 +111,22 @@ export const eliminarProceso = asyncHandler(async (req: Request, res: Response, 
   const { id } = req.params
   const usuarioId = (req as any).userId
 
+  logger.info('Eliminando proceso', { procesoId: id, usuarioId })
+
   const proceso = await prisma.proceso.findFirst({
     where: { id, usuarioId },
   })
 
   if (!proceso) {
+    logger.warn('Intento de eliminar proceso no encontrado', { procesoId: id })
     throw new AppError(404, 'Proceso no encontrado')
   }
 
   await prisma.proceso.delete({
     where: { id },
   })
+
+  logger.info('Proceso eliminado', { procesoId: id })
 
   res.json({ message: 'Proceso eliminado exitosamente' })
 })
