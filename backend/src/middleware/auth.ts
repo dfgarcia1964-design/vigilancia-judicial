@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
+import env from '../config/env.js'
+import { AppError } from './errorHandler.js'
 
 declare global {
   namespace Express {
@@ -13,17 +15,20 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
   const token = req.headers.authorization?.split(' ')[1]
 
   if (!token) {
-    return res.status(401).json({ error: 'Token no proporcionado' })
+    return next(new AppError(401, 'Token no proporcionado'))
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || 'secret-key'
-    ) as any
+    const decoded = jwt.verify(token, env.JWT_SECRET) as any
     req.userId = decoded.id
     next()
   } catch (error) {
-    return res.status(401).json({ error: 'Token inválido o expirado' })
+    if (error instanceof jwt.TokenExpiredError) {
+      return next(new AppError(401, 'Token expirado'))
+    }
+    if (error instanceof jwt.JsonWebTokenError) {
+      return next(new AppError(401, 'Token inválido'))
+    }
+    return next(new AppError(401, 'Error al verificar token'))
   }
 }

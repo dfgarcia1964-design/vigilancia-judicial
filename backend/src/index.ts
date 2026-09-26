@@ -1,11 +1,11 @@
 import app from './server.js'
 import dotenv from 'dotenv'
+import env from './config/env.js'
 
 dotenv.config()
 
-const PORT = process.env.PORT || 5000
-
-app.listen(PORT, () => {
-  console.log(`✅ Servidor ejecutándose en puerto ${PORT}`)
-  console.log(`Entorno: ${process.env.NODE_ENV}`)
+app.listen(env.PORT, () => {
+  console.log(`✅ Servidor ejecutándose en puerto ${env.PORT}`)
+  console.log(`Entorno: ${env.NODE_ENV}`)
+  console.log(`CORS Origin: ${env.CORS_ORIGIN}`)
 })

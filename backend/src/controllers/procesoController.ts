@@ -1,179 +1,148 @@
-import { PrismaClient } from '@prisma/client'
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
+import prisma from '../lib/prisma.js'
+import { AppError, asyncHandler } from '../middleware/errorHandler.js'
 
-const prisma = new PrismaClient()
+export const crearProceso = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { numero, entidad, asunto, tipo, expedienteId } = req.body
+  const usuarioId = (req as any).userId
 
-export const crearProceso = async (req: Request, res: Response) => {
-  try {
-    const { numero, entidad, asunto, tipo, expedienteId } = req.body
-    const usuarioId = (req as any).userId
-
-    if (!numero || !entidad || !asunto || !tipo) {
-      return res.status(400).json({ error: 'Campos requeridos: numero, entidad, asunto, tipo' })
-    }
-
-    const proceso = await prisma.proceso.create({
-      data: {
-        numero,
-        entidad,
-        asunto,
-        tipo,
-        estado: 'en_tramite',
-        usuarioId,
-        ...(expedienteId && { expedienteId }),
-      },
-    })
-
-    res.status(201).json({
-      message: 'Proceso creado exitosamente',
-      proceso,
-    })
-  } catch (error) {
-    console.error('Error al crear proceso:', error)
-    res.status(500).json({ error: 'Error al crear proceso' })
+  if (!numero || !entidad || !asunto || !tipo) {
+    throw new AppError(400, 'Campos requeridos: numero, entidad, asunto, tipo')
   }
-}
 
-export const obtenerProcesos = async (req: Request, res: Response) => {
-  try {
-    const usuarioId = (req as any).userId
-    const { estado, tipo, expedienteId } = req.query
+  const proceso = await prisma.proceso.create({
+    data: {
+      numero,
+      entidad,
+      asunto,
+      tipo,
+      estado: 'en_tramite',
+      usuarioId,
+      ...(expedienteId && { expedienteId }),
+    },
+  })
 
-    const donde: any = { usuarioId }
-    if (estado) donde.estado = estado
-    if (tipo) donde.tipo = tipo
-    if (expedienteId) donde.expedienteId = expedienteId
+  res.status(201).json({
+    message: 'Proceso creado exitosamente',
+    proceso,
+  })
+})
 
-    const procesos = await prisma.proceso.findMany({
-      where: donde,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        recursos: true,
-        respuestas: true,
-      },
-    })
+export const obtenerProcesos = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const usuarioId = (req as any).userId
+  const { estado, tipo, expedienteId } = req.query
 
-    res.json({
-      total: procesos.length,
-      procesos,
-    })
-  } catch (error) {
-    console.error('Error al obtener procesos:', error)
-    res.status(500).json({ error: 'Error al obtener procesos' })
+  const donde: any = { usuarioId }
+  if (estado) donde.estado = estado
+  if (tipo) donde.tipo = tipo
+  if (expedienteId) donde.expedienteId = expedienteId
+
+  const procesos = await prisma.proceso.findMany({
+    where: donde,
+    orderBy: { createdAt: 'desc' },
+    include: {
+      recursos: true,
+      respuestas: true,
+    },
+  })
+
+  res.json({
+    total: procesos.length,
+    procesos,
+  })
+})
+
+export const obtenerProceso = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const usuarioId = (req as any).userId
+
+  const proceso = await prisma.proceso.findFirst({
+    where: { id, usuarioId },
+    include: {
+      recursos: true,
+      respuestas: true,
+      alertas: true,
+    },
+  })
+
+  if (!proceso) {
+    throw new AppError(404, 'Proceso no encontrado')
   }
-}
 
-export const obtenerProceso = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params
-    const usuarioId = (req as any).userId
+  res.json(proceso)
+})
 
-    const proceso = await prisma.proceso.findFirst({
-      where: { id, usuarioId },
-      include: {
-        recursos: true,
-        respuestas: true,
-        alertas: true,
-      },
-    })
+export const actualizarProceso = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const usuarioId = (req as any).userId
+  const { numero, entidad, asunto, estado, tipo } = req.body
 
-    if (!proceso) {
-      return res.status(404).json({ error: 'Proceso no encontrado' })
-    }
+  const proceso = await prisma.proceso.findFirst({
+    where: { id, usuarioId },
+  })
 
-    res.json(proceso)
-  } catch (error) {
-    console.error('Error al obtener proceso:', error)
-    res.status(500).json({ error: 'Error al obtener proceso' })
+  if (!proceso) {
+    throw new AppError(404, 'Proceso no encontrado')
   }
-}
 
-export const actualizarProceso = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params
-    const usuarioId = (req as any).userId
-    const { numero, entidad, asunto, estado, tipo } = req.body
+  const procesoActualizado = await prisma.proceso.update({
+    where: { id },
+    data: {
+      ...(numero && { numero }),
+      ...(entidad && { entidad }),
+      ...(asunto && { asunto }),
+      ...(estado && { estado }),
+      ...(tipo && { tipo }),
+    },
+  })
 
-    const proceso = await prisma.proceso.findFirst({
-      where: { id, usuarioId },
-    })
+  res.json({
+    message: 'Proceso actualizado exitosamente',
+    proceso: procesoActualizado,
+  })
+})
 
-    if (!proceso) {
-      return res.status(404).json({ error: 'Proceso no encontrado' })
-    }
+export const eliminarProceso = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const usuarioId = (req as any).userId
 
-    const procesoActualizado = await prisma.proceso.update({
-      where: { id },
-      data: {
-        ...(numero && { numero }),
-        ...(entidad && { entidad }),
-        ...(asunto && { asunto }),
-        ...(estado && { estado }),
-        ...(tipo && { tipo }),
-      },
-    })
+  const proceso = await prisma.proceso.findFirst({
+    where: { id, usuarioId },
+  })
 
-    res.json({
-      message: 'Proceso actualizado exitosamente',
-      proceso: procesoActualizado,
-    })
-  } catch (error) {
-    console.error('Error al actualizar proceso:', error)
-    res.status(500).json({ error: 'Error al actualizar proceso' })
+  if (!proceso) {
+    throw new AppError(404, 'Proceso no encontrado')
   }
-}
 
-export const eliminarProceso = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params
-    const usuarioId = (req as any).userId
+  await prisma.proceso.delete({
+    where: { id },
+  })
 
-    const proceso = await prisma.proceso.findFirst({
-      where: { id, usuarioId },
-    })
+  res.json({ message: 'Proceso eliminado exitosamente' })
+})
 
-    if (!proceso) {
-      return res.status(404).json({ error: 'Proceso no encontrado' })
-    }
+export const buscarProcesos = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const usuarioId = (req as any).userId
+  const { q } = req.query
 
-    await prisma.proceso.delete({
-      where: { id },
-    })
-
-    res.json({ message: 'Proceso eliminado exitosamente' })
-  } catch (error) {
-    console.error('Error al eliminar proceso:', error)
-    res.status(500).json({ error: 'Error al eliminar proceso' })
+  if (!q) {
+    throw new AppError(400, 'Parámetro de búsqueda requerido')
   }
-}
 
-export const buscarProcesos = async (req: Request, res: Response) => {
-  try {
-    const usuarioId = (req as any).userId
-    const { q } = req.query
+  const procesos = await prisma.proceso.findMany({
+    where: {
+      usuarioId,
+      OR: [
+        { numero: { contains: q as string } },
+        { asunto: { contains: q as string } },
+        { entidad: { contains: q as string } },
+      ],
+    },
+    orderBy: { createdAt: 'desc' },
+  })
 
-    if (!q) {
-      return res.status(400).json({ error: 'Parámetro de búsqueda requerido' })
-    }
-
-    const procesos = await prisma.proceso.findMany({
-      where: {
-        usuarioId,
-        OR: [
-          { numero: { contains: q as string, mode: 'insensitive' } },
-          { asunto: { contains: q as string, mode: 'insensitive' } },
-          { entidad: { contains: q as string, mode: 'insensitive' } },
-        ],
-      },
-      orderBy: { createdAt: 'desc' },
-    })
-
-    res.json({
-      total: procesos.length,
-      resultados: procesos,
-    })
-  } catch (error) {
-    console.error('Error en búsqueda de procesos:', error)
-    res.status(500).json({ error: 'Error en búsqueda de procesos' })
-  }
-}
+  res.json({
+    total: procesos.length,
+    resultados: procesos,
+  })
+})

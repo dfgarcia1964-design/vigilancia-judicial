@@ -1,199 +1,168 @@
-import { PrismaClient } from '@prisma/client'
-import { Request, Response } from 'express'
+import { Request, Response, NextFunction } from 'express'
+import prisma from '../lib/prisma.js'
+import { AppError, asyncHandler } from '../middleware/errorHandler.js'
 
-const prisma = new PrismaClient()
+export const crearExpediente = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { numero, juzgado, demandante, demandado, asunto, tipo, fechaInicio } = req.body
+  const usuarioId = (req as any).userId
 
-export const crearExpediente = async (req: Request, res: Response) => {
-  try {
-    const { numero, juzgado, demandante, demandado, asunto, tipo, fechaInicio } = req.body
-    const usuarioId = (req as any).userId
-
-    if (!numero || !juzgado || !demandante || !demandado || !asunto || !tipo || !fechaInicio) {
-      return res.status(400).json({ error: 'Todos los campos son requeridos' })
-    }
-
-    const expedienteExistente = await prisma.expediente.findUnique({
-      where: { numero },
-    })
-
-    if (expedienteExistente) {
-      return res.status(400).json({ error: 'El número de expediente ya existe' })
-    }
-
-    const expediente = await prisma.expediente.create({
-      data: {
-        numero,
-        juzgado,
-        demandante,
-        demandado,
-        asunto,
-        tipo,
-        fechaInicio: new Date(fechaInicio),
-        usuarioId,
-      },
-    })
-
-    res.status(201).json({
-      message: 'Expediente creado exitosamente',
-      expediente,
-    })
-  } catch (error) {
-    console.error('Error al crear expediente:', error)
-    res.status(500).json({ error: 'Error al crear expediente' })
+  if (!numero || !juzgado || !demandante || !demandado || !asunto || !tipo || !fechaInicio) {
+    throw new AppError(400, 'Todos los campos son requeridos')
   }
-}
 
-export const obtenerExpedientes = async (req: Request, res: Response) => {
-  try {
-    const usuarioId = (req as any).userId
-    const { estado, tipo, juzgado } = req.query
+  const expedienteExistente = await prisma.expediente.findUnique({
+    where: { numero },
+  })
 
-    const donde: any = { usuarioId }
-
-    if (estado) donde.estado = estado
-    if (tipo) donde.tipo = tipo
-    if (juzgado) donde.juzgado = { contains: juzgado as string, mode: 'insensitive' }
-
-    const expedientes = await prisma.expediente.findMany({
-      where: donde,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        audiencias: true,
-        alertas: true,
-      },
-    })
-
-    res.json({
-      total: expedientes.length,
-      expedientes,
-    })
-  } catch (error) {
-    console.error('Error al obtener expedientes:', error)
-    res.status(500).json({ error: 'Error al obtener expedientes' })
+  if (expedienteExistente) {
+    throw new AppError(400, 'El número de expediente ya existe')
   }
-}
 
-export const obtenerExpediente = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params
-    const usuarioId = (req as any).userId
+  const expediente = await prisma.expediente.create({
+    data: {
+      numero,
+      juzgado,
+      demandante,
+      demandado,
+      asunto,
+      tipo,
+      fechaInicio: new Date(fechaInicio),
+      usuarioId,
+    },
+  })
 
-    const expediente = await prisma.expediente.findFirst({
-      where: { id, usuarioId },
-      include: {
-        documentos: true,
-        audiencias: true,
-        alertas: true,
-        procesos: true,
-      },
-    })
+  res.status(201).json({
+    message: 'Expediente creado exitosamente',
+    expediente,
+  })
+})
 
-    if (!expediente) {
-      return res.status(404).json({ error: 'Expediente no encontrado' })
-    }
+export const obtenerExpedientes = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const usuarioId = (req as any).userId
+  const { estado, tipo, juzgado } = req.query
 
-    res.json(expediente)
-  } catch (error) {
-    console.error('Error al obtener expediente:', error)
-    res.status(500).json({ error: 'Error al obtener expediente' })
+  const donde: any = { usuarioId }
+
+  if (estado) donde.estado = estado
+  if (tipo) donde.tipo = tipo
+  if (juzgado) donde.juzgado = { contains: juzgado as string }
+
+  const expedientes = await prisma.expediente.findMany({
+    where: donde,
+    orderBy: { createdAt: 'desc' },
+    include: {
+      audiencias: true,
+      alertas: true,
+    },
+  })
+
+  res.json({
+    total: expedientes.length,
+    expedientes,
+  })
+})
+
+export const obtenerExpediente = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const usuarioId = (req as any).userId
+
+  const expediente = await prisma.expediente.findFirst({
+    where: { id, usuarioId },
+    include: {
+      documentos: true,
+      audiencias: true,
+      alertas: true,
+      procesos: true,
+    },
+  })
+
+  if (!expediente) {
+    throw new AppError(404, 'Expediente no encontrado')
   }
-}
 
-export const actualizarExpediente = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params
-    const usuarioId = (req as any).userId
-    const { numero, juzgado, demandante, demandado, asunto, estado, tipo, fechaInicio } = req.body
+  res.json(expediente)
+})
 
-    const expediente = await prisma.expediente.findFirst({
-      where: { id, usuarioId },
-    })
+export const actualizarExpediente = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const usuarioId = (req as any).userId
+  const { numero, juzgado, demandante, demandado, asunto, estado, tipo, fechaInicio } = req.body
 
-    if (!expediente) {
-      return res.status(404).json({ error: 'Expediente no encontrado' })
-    }
+  const expediente = await prisma.expediente.findFirst({
+    where: { id, usuarioId },
+  })
 
-    const expedienteActualizado = await prisma.expediente.update({
-      where: { id },
-      data: {
-        ...(numero && { numero }),
-        ...(juzgado && { juzgado }),
-        ...(demandante && { demandante }),
-        ...(demandado && { demandado }),
-        ...(asunto && { asunto }),
-        ...(estado && { estado }),
-        ...(tipo && { tipo }),
-        ...(fechaInicio && { fechaInicio: new Date(fechaInicio) }),
-      },
-      include: {
-        audiencias: true,
-        alertas: true,
-      },
-    })
-
-    res.json({
-      message: 'Expediente actualizado exitosamente',
-      expediente: expedienteActualizado,
-    })
-  } catch (error) {
-    console.error('Error al actualizar expediente:', error)
-    res.status(500).json({ error: 'Error al actualizar expediente' })
+  if (!expediente) {
+    throw new AppError(404, 'Expediente no encontrado')
   }
-}
 
-export const eliminarExpediente = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params
-    const usuarioId = (req as any).userId
+  const expedienteActualizado = await prisma.expediente.update({
+    where: { id },
+    data: {
+      ...(numero && { numero }),
+      ...(juzgado && { juzgado }),
+      ...(demandante && { demandante }),
+      ...(demandado && { demandado }),
+      ...(asunto && { asunto }),
+      ...(estado && { estado }),
+      ...(tipo && { tipo }),
+      ...(fechaInicio && { fechaInicio: new Date(fechaInicio) }),
+    },
+    include: {
+      audiencias: true,
+      alertas: true,
+    },
+  })
 
-    const expediente = await prisma.expediente.findFirst({
-      where: { id, usuarioId },
-    })
+  res.json({
+    message: 'Expediente actualizado exitosamente',
+    expediente: expedienteActualizado,
+  })
+})
 
-    if (!expediente) {
-      return res.status(404).json({ error: 'Expediente no encontrado' })
-    }
+export const eliminarExpediente = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const usuarioId = (req as any).userId
 
-    await prisma.expediente.delete({
-      where: { id },
-    })
+  const expediente = await prisma.expediente.findFirst({
+    where: { id, usuarioId },
+  })
 
-    res.json({ message: 'Expediente eliminado exitosamente' })
-  } catch (error) {
-    console.error('Error al eliminar expediente:', error)
-    res.status(500).json({ error: 'Error al eliminar expediente' })
+  if (!expediente) {
+    throw new AppError(404, 'Expediente no encontrado')
   }
-}
 
-export const buscarExpedientes = async (req: Request, res: Response) => {
-  try {
-    const usuarioId = (req as any).userId
-    const { q } = req.query
+  await prisma.expediente.delete({
+    where: { id },
+  })
 
-    if (!q) {
-      return res.status(400).json({ error: 'Parámetro de búsqueda requerido' })
-    }
+  res.json({ message: 'Expediente eliminado exitosamente' })
+})
 
-    const expedientes = await prisma.expediente.findMany({
-      where: {
-        usuarioId,
-        OR: [
-          { numero: { contains: q as string, mode: 'insensitive' } },
-          { asunto: { contains: q as string, mode: 'insensitive' } },
-          { demandante: { contains: q as string, mode: 'insensitive' } },
-          { demandado: { contains: q as string, mode: 'insensitive' } },
-          { juzgado: { contains: q as string, mode: 'insensitive' } },
-        ],
-      },
-      orderBy: { createdAt: 'desc' },
-    })
+export const buscarExpedientes = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const usuarioId = (req as any).userId
+  const { q } = req.query
 
-    res.json({
-      total: expedientes.length,
-      resultados: expedientes,
-    })
-  } catch (error) {
-    console.error('Error en búsqueda de expedientes:', error)
-    res.status(500).json({ error: 'Error en búsqueda de expedientes' })
+  if (!q) {
+    throw new AppError(400, 'Parámetro de búsqueda requerido')
   }
-}
+
+  const expedientes = await prisma.expediente.findMany({
+    where: {
+      usuarioId,
+      OR: [
+        { numero: { contains: q as string } },
+        { asunto: { contains: q as string } },
+        { demandante: { contains: q as string } },
+        { demandado: { contains: q as string } },
+        { juzgado: { contains: q as string } },
+      ],
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  res.json({
+    total: expedientes.length,
+    resultados: expedientes,
+  })
+})

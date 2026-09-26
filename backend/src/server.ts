@@ -1,11 +1,14 @@
 import express from 'express'
 import cors from 'cors'
+import helmet from 'helmet'
 import { Server as SocketIOServer } from 'socket.io'
 import { createServer } from 'http'
 import dotenv from 'dotenv'
 import authRoutes from './routes/auth.js'
 import expedientesRoutes from './routes/expedientes.js'
 import procesosRoutes from './routes/procesos.js'
+import env from './config/env.js'
+import { errorHandler } from './middleware/errorHandler.js'
 
 dotenv.config()
 
@@ -13,17 +16,19 @@ const app = express()
 const httpServer = createServer(app)
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: process.env.SOCKET_IO_ORIGIN || 'http://localhost:3000',
+    origin: env.SOCKET_IO_ORIGIN,
     methods: ['GET', 'POST'],
   },
 })
 
+app.use(helmet())
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: env.CORS_ORIGIN,
+  credentials: true,
 }))
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/expedientes', expedientesRoutes)
@@ -54,9 +59,6 @@ io.on('connection', (socket) => {
   })
 })
 
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Error:', err)
-  res.status(500).json({ error: 'Error interno del servidor' })
-})
+app.use(errorHandler)
 
 export default httpServer
