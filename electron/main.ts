@@ -1,10 +1,14 @@
 import { app, BrowserWindow, Menu, ipcMain, dialog } from 'electron'
 import path from 'path'
-import isDev from 'electron-is-dev'
 import { fileURLToPath } from 'url'
+import fs from 'fs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+
+// Detect dev mode by checking if frontend dist exists
+const frontendDistPath = path.join(__dirname, '../../frontend/dist/index.html')
+const isDev = !fs.existsSync(frontendDistPath)
 
 let mainWindow: BrowserWindow | null = null
 
@@ -26,7 +30,7 @@ const createWindow = () => {
 
   const startUrl = isDev
     ? 'http://localhost:5173'
-    : `file://${path.join(__dirname, '../../frontend/dist/index.html')}`
+    : `file://${frontendDistPath}`
 
   mainWindow.loadURL(startUrl).catch((err) => {
     console.error('Error loading URL:', err)
