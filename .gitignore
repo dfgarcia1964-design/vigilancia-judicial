@@ -47,3 +47,12 @@ build/
 temp/
 tmp/
 *.tmp
+
+# Electron
+dist/
+out/
+*.dmg
+*.AppImage
+*.deb
+*.exe
+release/
