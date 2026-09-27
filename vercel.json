@@ -5,8 +5,5 @@
   "framework": "vite",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": false,
-  "env": [
-    "VITE_API_URL"
-  ]
+  "trailingSlash": false
 }
