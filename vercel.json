@@ -4,7 +4,6 @@
   "installCommand": "npm install",
   "framework": "vite",
   "outputDirectory": "dist",
-  "public": false,
   "cleanUrls": true,
   "trailingSlash": false,
   "env": [
