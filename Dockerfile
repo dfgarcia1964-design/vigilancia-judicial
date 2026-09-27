@@ -21,7 +21,9 @@ COPY --from=builder /app/backend/dist ./backend/dist
 COPY --from=builder /app/backend/node_modules ./backend/node_modules
 COPY --from=builder /app/backend/package.json ./backend/
 COPY --from=builder /app/backend/prisma ./backend/prisma
-COPY --from=builder /app/backend/public ./backend/public
+
+# Copy frontend static files from build context
+COPY backend/public ./backend/public
 
 WORKDIR /app/backend
 
