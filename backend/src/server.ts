@@ -5,6 +5,7 @@ import { Server as SocketIOServer } from 'socket.io'
 import { createServer } from 'http'
 import dotenv from 'dotenv'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.js'
 import expedientesRoutes from './routes/expedientes.js'
 import procesosRoutes from './routes/procesos.js'
@@ -15,6 +16,7 @@ import logger from './lib/logger.js'
 
 dotenv.config()
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const httpServer = createServer(app)
 const io = new SocketIOServer(httpServer, {
@@ -36,7 +38,7 @@ app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
 // Serve static frontend files
-const publicPath = path.join(process.cwd(), 'public')
+const publicPath = path.join(__dirname, '..', 'public')
 app.use(express.static(publicPath))
 
 app.use('/api/auth', authRoutes)
@@ -57,7 +59,9 @@ app.get('/api/stats', (req, res) => {
 })
 
 // Serve index.html for all non-API routes (React Router support)
-app.get('*', (req, res) => {
+app.get('*', (req, res, next) => {
+  // Only serve index.html for GET requests
+  if (req.method !== 'GET') return next()
   res.sendFile(path.join(publicPath, 'index.html'))
 })
 
