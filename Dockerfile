@@ -24,6 +24,9 @@ COPY --from=builder /app/backend/prisma ./backend/prisma
 
 WORKDIR /app/backend
 
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 EXPOSE 5000
 
-CMD node dist/index.js
+ENTRYPOINT ["/app/entrypoint.sh"]
