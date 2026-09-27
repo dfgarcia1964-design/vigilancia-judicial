@@ -24,6 +24,9 @@ COPY --from=builder /app/backend/prisma ./backend/prisma
 
 WORKDIR /app/backend
 
+# Regenerate Prisma Client for the Debian environment
+RUN npx prisma generate
+
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
