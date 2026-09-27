@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import { Server as SocketIOServer } from 'socket.io'
 import { createServer } from 'http'
 import dotenv from 'dotenv'
+import path from 'path'
 import authRoutes from './routes/auth.js'
 import expedientesRoutes from './routes/expedientes.js'
 import procesosRoutes from './routes/procesos.js'
@@ -34,6 +35,10 @@ app.use(requestLogger)
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
+// Serve static frontend files
+const publicPath = path.join(process.cwd(), 'public')
+app.use(express.static(publicPath))
+
 app.use('/api/auth', authRoutes)
 app.use('/api/expedientes', expedientesRoutes)
 app.use('/api/procesos', procesosRoutes)
@@ -49,6 +54,11 @@ app.get('/api/stats', (req, res) => {
     alertas: 8,
     documentos: 156,
   })
+})
+
+// Serve index.html for all non-API routes (React Router support)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicPath, 'index.html'))
 })
 
 io.on('connection', (socket) => {
