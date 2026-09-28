@@ -7,6 +7,7 @@ export default function Sidebar() {
     { path: '/procesos', label: '⚖️ Procesos', icon: 'law' },
     { path: '/alertas', label: '🔔 Alertas', icon: 'bell' },
     { path: '/documentos', label: '📄 Documentos', icon: 'document' },
+    { path: '/analisis-juridico', label: '⚖️ Análisis Jurídico', icon: 'analysis' },
   ]
 
   return (
