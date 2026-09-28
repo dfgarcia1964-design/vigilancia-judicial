@@ -1,0 +1,350 @@
+.skill-analisis-juridico {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 8px;
+  max-width: 1200px;
+  margin: 1rem auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+}
+
+/* Header */
+.skill-analisis-juridico .header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #2c3e50;
+}
+
+.skill-analisis-juridico .header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.8rem;
+}
+
+.skill-analisis-juridico .header p {
+  margin: 0.5rem 0 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* Configuración */
+.skill-analisis-juridico .configuracion {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.skill-analisis-juridico .control-grupo {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.skill-analisis-juridico .control-grupo label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.skill-analisis-juridico .control-grupo select,
+.skill-analisis-juridico .control-grupo input {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  background: white;
+  color: #333;
+  transition: border-color 0.2s;
+}
+
+.skill-analisis-juridico .control-grupo select:hover,
+.skill-analisis-juridico .control-grupo input:hover {
+  border-color: #2c3e50;
+}
+
+.skill-analisis-juridico .control-grupo select:focus,
+.skill-analisis-juridico .control-grupo input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Botones */
+.skill-analisis-juridico .btn-analizar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.85rem 2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.skill-analisis-juridico .btn-analizar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.skill-analisis-juridico .btn-analizar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error */
+.skill-analisis-juridico .error-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #c33;
+  font-weight: 500;
+}
+
+/* Resultado */
+.skill-analisis-juridico .resultado {
+  background: white;
+  border-radius: 6px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs */
+.skill-analisis-juridico .tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+
+.skill-analisis-juridico .tab {
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.skill-analisis-juridico .tab:hover {
+  color: #2c3e50;
+  background: #f9f9f9;
+}
+
+.skill-analisis-juridico .tab.activo {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+/* Contenido del tab */
+.skill-analisis-juridico .contenido-tab {
+  margin-bottom: 1.5rem;
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.skill-analisis-juridico .analisis-text pre {
+  margin: 0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.skill-analisis-juridico .seccion-normas,
+.skill-analisis-juridico .seccion-hechos,
+.skill-analisis-juridico .seccion-consecuencias {
+  color: #333;
+}
+
+.skill-analisis-juridico .seccion-normas h4,
+.skill-analisis-juridico .seccion-hechos h4,
+.skill-analisis-juridico .seccion-consecuencias h4 {
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.skill-analisis-juridico .seccion-normas ul,
+.skill-analisis-juridico .seccion-hechos ul,
+.skill-analisis-juridico .seccion-consecuencias ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.skill-analisis-juridico .seccion-normas li,
+.skill-analisis-juridico .seccion-hechos li,
+.skill-analisis-juridico .seccion-consecuencias li {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+/* Acciones */
+.skill-analisis-juridico .acciones {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.skill-analisis-juridico .btn-export,
+.skill-analisis-juridico .btn-reset {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.skill-analisis-juridico .btn-export {
+  background: #3498db;
+  color: white;
+}
+
+.skill-analisis-juridico .btn-export:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.skill-analisis-juridico .btn-reset {
+  background: #95a5a6;
+  color: white;
+}
+
+.skill-analisis-juridico .btn-reset:hover {
+  background: #7f8c8d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(149, 165, 166, 0.3);
+}
+
+/* Metadata */
+.skill-analisis-juridico .metadata {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+  text-align: right;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+/* Info skill */
+.skill-analisis-juridico .info-skill {
+  background: #fffacd;
+  border-left: 4px solid #f0ad4e;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-top: 1.5rem;
+  color: #333;
+}
+
+.skill-analisis-juridico .info-skill h4 {
+  margin-top: 0;
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.skill-analisis-juridico .info-skill ul {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.skill-analisis-juridico .info-skill li {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .skill-analisis-juridico {
+    padding: 1rem;
+  }
+
+  .skill-analisis-juridico .header h2 {
+    font-size: 1.4rem;
+  }
+
+  .skill-analisis-juridico .tabs {
+    flex-wrap: wrap;
+  }
+
+  .skill-analisis-juridico .acciones {
+    flex-direction: column;
+  }
+
+  .skill-analisis-juridico .btn-export,
+  .skill-analisis-juridico .btn-reset {
+    width: 100%;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .skill-analisis-juridico {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  }
+
+  .skill-analisis-juridico .header {
+    border-bottom-color: #ecf0f1;
+  }
+
+  .skill-analisis-juridico .header h2,
+  .skill-analisis-juridico .control-grupo label,
+  .skill-analisis-juridico .info-skill h4 {
+    color: #ecf0f1;
+  }
+
+  .skill-analisis-juridico .header p {
+    color: #bdc3c7;
+  }
+
+  .skill-analisis-juridico .configuracion,
+  .skill-analisis-juridico .resultado {
+    background: #34495e;
+  }
+
+  .skill-analisis-juridico .control-grupo select,
+  .skill-analisis-juridico .control-grupo input {
+    background: #2c3e50;
+    color: #ecf0f1;
+    border-color: #555;
+  }
+
+  .skill-analisis-juridico .contenido-tab {
+    background: #2c3e50;
+    color: #ecf0f1;
+  }
+
+  .skill-analisis-juridico .analisis-text pre {
+    color: #ecf0f1;
+  }
+
+  .skill-analisis-juridico .info-skill {
+    background: #2c3e50;
+    border-left-color: #f39c12;
+    color: #ecf0f1;
+  }
+}

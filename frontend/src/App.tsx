@@ -9,6 +9,7 @@ import Expedientes from './pages/Expedientes'
 import Procesos from './pages/Procesos'
 import Alertas from './pages/Alertas'
 import Documentos from './pages/Documentos'
+import AnalisisJuridico from './pages/AnalisisJuridico'
 import { useAuthStore } from './store/authStore'
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path="/procesos" element={<Procesos />} />
           <Route path="/alertas" element={<Alertas />} />
           <Route path="/documentos" element={<Documentos />} />
+          <Route path="/analisis-juridico" element={<AnalisisJuridico />} />
         </Route>
       </Routes>
     </BrowserRouter>

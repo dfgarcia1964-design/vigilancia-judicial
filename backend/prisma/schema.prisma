@@ -76,6 +76,11 @@ model Documento {
   usuarioId     String
   usuario       Usuario  @relation(fields: [usuarioId], references: [id])
 
+  analisis      AnalisisDocumento[]
+  similares     SimilitudDocumento[] @relation("origen")
+  similadesA    SimilitudDocumento[] @relation("similar")
+  historialAnalisis HistorialAnalisis[]
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -131,4 +136,106 @@ model Respuesta {
   proceso       Proceso  @relation(fields: [procesoId], references: [id])
 
   createdAt     DateTime @default(now())
+}
+
+model AnalisisDocumento {
+  id                  String   @id @default(cuid())
+  documentoId         String
+  documento           Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+
+  tipoAnalisis        String   // "sentence_analysis", "resolution_analysis", "document_classification"
+  tipoDocumento       String?  // "sentencia", "resolucion", "auto", "demanda", etc.
+  estado              String   @default("pendiente") // "pendiente", "en_proceso", "completado", "error"
+
+  contenidoAnalisis   String?  // JSON serializado con el análisis completo
+  resumen             String?
+  palabrasClave       String?  // JSON array de palabras clave
+  entidadesExtraidas  String?  // JSON con entidades extraídas
+
+  nivelRiesgo         String?  // "bajo", "medio", "alto"
+  puntajeConfianza    Float?
+
+  partes              String?  // JSON: demandante, demandado, etc.
+  materia             String?  // Materia legal principal
+  juzgado             String?
+  fecha               DateTime?
+  radicado            String?
+
+  recomendaciones     String?  // JSON con recomendaciones
+  recursosDisponibles String?  // JSON array
+
+  procesoId           String?  // Referencia opcional a proceso administrativo
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  entidadesExtraidas_rel EntidadExtraida[]
+  historialAnalisis   HistorialAnalisis[]
+
+  @@index([documentoId])
+  @@index([tipoAnalisis])
+  @@index([estado])
+  @@index([nivelRiesgo])
+  @@index([createdAt])
+}
+
+model EntidadExtraida {
+  id                String   @id @default(cuid())
+  analisisId        String
+  analisis          AnalisisDocumento @relation(fields: [analisisId], references: [id], onDelete: Cascade)
+
+  tipoEntidad       String   // "persona", "organizacion", "fecha", "monto", "lugar", etc.
+  valor             String
+  puntajeConfianza  Float?
+  posicionInicio    Int?
+  posicionFin       Int?
+  contexto          String?  // Texto circundante
+
+  createdAt         DateTime @default(now())
+
+  @@index([analisisId])
+  @@index([tipoEntidad])
+  @@index([valor])
+}
+
+model SimilitudDocumento {
+  id                String   @id @default(cuid())
+  documentoOrigenId String
+  documentoOrigen   Documento @relation("origen", fields: [documentoOrigenId], references: [id], onDelete: Cascade)
+
+  documentoSimilarId String
+  documentoSimilar  Documento @relation("similar", fields: [documentoSimilarId], references: [id], onDelete: Cascade)
+
+  puntajeSimilitud  Float    // 0.0 a 1.0
+  razon             String?  // "contenido_similar", "mismo_juzgado", "mismas_partes", etc.
+
+  createdAt         DateTime @default(now())
+
+  @@unique([documentoOrigenId, documentoSimilarId])
+  @@index([documentoOrigenId])
+  @@index([documentoSimilarId])
+  @@index([puntajeSimilitud])
+}
+
+model HistorialAnalisis {
+  id                String   @id @default(cuid())
+  documentoId       String
+  documento         Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+
+  analisisId        String?
+  analisis          AnalisisDocumento? @relation(fields: [analisisId], references: [id], onDelete: SetNull)
+
+  versionAnalisis   Int
+  analisisAnterior  String?  // JSON serializado
+  analisisActual    String   // JSON serializado
+  cambios           String?  // JSON con diferencias
+
+  realizadoPor      String?
+  notas             String?
+
+  createdAt         DateTime @default(now())
+
+  @@index([documentoId])
+  @@index([versionAnalisis])
+  @@index([createdAt])
 }

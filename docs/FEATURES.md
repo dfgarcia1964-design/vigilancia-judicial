@@ -61,6 +61,15 @@
 - [ ] Exportación a Excel/PDF
 - [ ] Gráficos y dashboards
 
+### Análisis Avanzado de Documentos (NEW)
+- [ ] Análisis automático de sentencias con IA
+- [ ] Extracción de entidades e información estructurada
+- [ ] Clasificación automática de documentos
+- [ ] Análisis de riesgos y recomendaciones
+- [ ] Búsqueda semántica y similitud de documentos
+- [ ] Resúmenes inteligentes y ejecutivos
+- [ ] Histórico y versioning de análisis
+
 ## 🔮 Características Futuras (v1.0.0+)
 
 ### Integraciones
