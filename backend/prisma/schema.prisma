@@ -147,8 +147,8 @@ model AnalisisDocumento {
   tipoDocumento       String?  // "sentencia", "resolucion", "auto", "demanda", etc.
   estado              String   @default("pendiente") // "pendiente", "en_proceso", "completado", "error"
 
-  contenidoAnalisis   String?  @db.Text // JSON serializado con el análisis completo
-  resumen             String?  @db.Text
+  contenidoAnalisis   String?  // JSON serializado con el análisis completo
+  resumen             String?
   palabrasClave       String?  // JSON array de palabras clave
   entidadesExtraidas  String?  // JSON con entidades extraídas
 
@@ -161,7 +161,7 @@ model AnalisisDocumento {
   fecha               DateTime?
   radicado            String?
 
-  recomendaciones     String?  @db.Text // JSON con recomendaciones
+  recomendaciones     String?  // JSON con recomendaciones
   recursosDisponibles String?  // JSON array
 
   procesoId           String?  // Referencia opcional a proceso administrativo
@@ -226,9 +226,9 @@ model HistorialAnalisis {
   analisis          AnalisisDocumento? @relation(fields: [analisisId], references: [id], onDelete: SetNull)
 
   versionAnalisis   Int
-  analisisAnterior  String?  @db.Text // JSON serializado
-  analisisActual    String   @db.Text // JSON serializado
-  cambios           String?  @db.Text // JSON con diferencias
+  analisisAnterior  String?  // JSON serializado
+  analisisActual    String   // JSON serializado
+  cambios           String?  // JSON con diferencias
 
   realizadoPor      String?
   notas             String?
